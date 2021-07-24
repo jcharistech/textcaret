@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# This file is part of the NEAT Project suite of libraries
-# Please see the LICENSE file that should have been included as part of this
-# package.
-
 from collections import Counter,defaultdict
 import matplotlib.pyplot as plt 
 from sumy.parsers.plaintext import PlaintextParser

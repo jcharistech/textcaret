@@ -88,7 +88,18 @@ class TextCaret(object):
 
 
 class TextSummarizer(object):
-	"""docstring for TextSummarizer"""
+	"""TextSummarizer: summarize a given document/text using several summarization
+	algorithms such as lexrank,luhn,lsa,etc
+	
+	Returns: A Dictionary of various summary per the each extractive algorithm
+	
+	Usage::
+	>>> from textcaret import TextSummarizer
+	>>> s = "your text"
+	>>> summarizer = TextSummarizer(s)
+	>>> summarizer.summarize()
+
+	"""
 	def __init__(self, text=None):
 		super(TextSummarizer, self).__init__()
 		self.text = text
