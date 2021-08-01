@@ -14,6 +14,8 @@ from sumy.summarizers.luhn import LuhnSummarizer
 import random
 import neattext.functions as nfx
 from wordcloud import WordCloud
+from textblob import TextBlob
+
 
 
 def plot_wordcloud(docx):
@@ -32,8 +34,7 @@ def plot_mendelhall_curve(docx):
     plt.plot(x, y)
     plt.title("Plot of Word Length Distribution")
     plt.show()
-    st.pyplot(fig)
-
+ 
 
 def get_most_common_tokens(docx, num=10):
     clean_docx = nfx.remove_stopwords(docx)
@@ -73,6 +74,35 @@ def get_most_common_pos_tags(docx, num=10):
     return x, y
 
 
+def text_readability(text):
+    import textstat 
+    docx = (text)
+    results = {"flesch_reading":textstat.flesch_reading_ease(docx),
+    "smog_index":textstat.smog_index(docx),
+    "flesch_kincaid":textstat.flesch_kincaid_grade(docx),
+    "coleman_liau":textstat.coleman_liau_index(docx),
+    "ari":textstat.automated_readability_index(docx),
+    "dale_chall":textstat.dale_chall_readability_score(docx),
+    "difficult_words":textstat.difficult_words(docx),
+    "linsear_write_formula":textstat.linsear_write_formula(docx),
+    "gunning_fog":textstat.gunning_fog(docx),
+    # "text_standard":textstat.text_standard(docx),
+    "fernandez_huerta":textstat.fernandez_huerta(docx),
+    "szigriszt_pazos":textstat.szigriszt_pazos(docx),
+    "gutierrez_polini":textstat.gutierrez_polini(docx),
+    "crawford":textstat.crawford(docx)}
+    return results
+
+
+def plot_text_readability(text):
+    x,y = zip(*text_readability())
+    fig = plt.figure(figsize=(20, 10))
+    plt.plot(x, y)
+    plt.title("Plot of Text Readability")
+    plt.show()
+
+
+
 def visualize_text(docx, token_num=10, figsize=(20, 10), rotation=40):
     """Visualize Text Supplied
 
@@ -93,6 +123,7 @@ def visualize_text(docx, token_num=10, figsize=(20, 10), rotation=40):
     xm, ym = get_mendelhall_curve(docx)
     xp, yp = get_most_common_pos_tags(docx)
     mywordcloud = __get_wordcloud(docx)
+    xr,yr = zip(*text_readability(docx).items())
     # Vertically Stacked Subplot
     # fig, ((ax1, ax2),(ax3, ax4)) = plt.subplots(2,2,figsize=figsize) # change to 3,2
     fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=figsize)
@@ -100,7 +131,7 @@ def visualize_text(docx, token_num=10, figsize=(20, 10), rotation=40):
     ax1.bar(xt, yt)
     ax1.set_title("Tokens Frequency")
     ax1.tick_params(labelrotation=rotation)
-    ax2.bar(xs, ys)
+    ax2.bar(xs, ys,color="orange")
     ax2.set_title("Stopwords Frequency")
     ax2.tick_params(labelrotation=rotation)
     ax3.plot(xm, ym)
@@ -110,9 +141,53 @@ def visualize_text(docx, token_num=10, figsize=(20, 10), rotation=40):
     ax5.bar(xp, yp, color="green")
     ax5.set_title("PoS Tags Frequency")
     ax5.tick_params(labelrotation=rotation)
-    ax6.bar(xs, ys)
-    ax6.set_title("Stopwords Frequency")
+    ax6.bar(xr, yr)
+    ax6.set_title("Text Readability")
     ax6.tick_params(labelrotation=rotation)
+
+
+def save_visualized_text(docx, filename,token_num=10, figsize=(20, 10), rotation=40):
+    """Save the Visualized Text 
+
+    Returns: several plots such as wordcloud,mendelhall_curve,pos_tags plot etc
+    Params:
+            docx: text document
+            token_num: number of tokens to use.Default is 10
+            figsize: figsize as a tuple(20,10)
+            rotation: labelrotation for labels for only bar plot
+
+    Usage::
+    >>> save_visualized_text(docx,'myplot.png')
+
+    """
+    # Generate Values for each metric
+    xt, yt = get_most_common_tokens(docx, num=token_num)
+    xs, ys = get_stopwords_freq(docx, num=token_num)
+    xm, ym = get_mendelhall_curve(docx)
+    xp, yp = get_most_common_pos_tags(docx)
+    mywordcloud = __get_wordcloud(docx)
+    xr,yr = zip(*text_readability(docx).items())
+    # Vertically Stacked Subplot
+    # fig, ((ax1, ax2),(ax3, ax4)) = plt.subplots(2,2,figsize=figsize) # change to 3,2
+    fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=figsize)
+    fig.suptitle("TextViz Subplots[Vertical]")
+    ax1.bar(xt, yt)
+    ax1.set_title("Tokens Frequency")
+    ax1.tick_params(labelrotation=rotation)
+    ax2.bar(xs, ys,color="orange")
+    ax2.set_title("Stopwords Frequency")
+    ax2.tick_params(labelrotation=rotation)
+    ax3.plot(xm, ym)
+    ax3.set_title("Mendalhall Curve")
+    ax4.imshow(mywordcloud, interpolation="bilinear")
+    ax4.set_title("Wordcloud")
+    ax5.bar(xp, yp, color="green")
+    ax5.set_title("PoS Tags Frequency")
+    ax5.tick_params(labelrotation=rotation)
+    ax6.bar(xr, yr)
+    ax6.set_title("Text Readability")
+    ax6.tick_params(labelrotation=rotation)
+    fig.savefig(filename)
 
 
 def summarize_text(docx, num_sentence=2):
@@ -209,3 +284,4 @@ def generate_text(text, num_of_words=15):
     result_dict = markov_chain(text)
     final_result_sentence = __generate_text(result_dict, num_of_words)
     return final_result_sentence
+

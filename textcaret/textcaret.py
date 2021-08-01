@@ -12,7 +12,7 @@ from sumy.summarizers.lex_rank import LexRankSummarizer
 from sumy.summarizers.lsa import LsaSummarizer
 from sumy.summarizers.luhn import LuhnSummarizer
 from textblob import TextBlob
-from textcaret.functions import visualize_text
+from textcaret.functions import visualize_text,save_visualized_text
 
 
 class TextViz(object):
@@ -26,12 +26,12 @@ class TextViz(object):
 
     """
 
-    def __init__(self, text):
+    def __init__(self, text=None):
         super(TextViz, self).__init__()
         self.text = text
 
     def __repr__(self):
-        return "TextViz(text={})".format(self.text)
+        return "TextViz(text='{}')".format(self.text)
 
     def __str__(self):
         return self.text
@@ -65,6 +65,15 @@ class TextViz(object):
     def visualize(self):
         return visualize_text(self.text)
 
+    def save_figure(self,filename):
+        """Save Plot or Figure
+        
+        usage:
+        >>> vis.save_figure('myplot.png')
+
+        """
+        return save_visualized_text(self.text,filename)
+
 
 class TextSummarizer(object):
     """TextSummarizer: summarize a given document/text using several summarization
@@ -77,6 +86,8 @@ class TextSummarizer(object):
     >>> s = "your text"
     >>> summarizer = TextSummarizer(s)
     >>> summarizer.summarize()
+    >>> # Number of Sentence Summary to Generate
+    >>> summarizer.summarize(num_sentence=3)
 
     """
 
@@ -85,7 +96,7 @@ class TextSummarizer(object):
         self.text = text
 
     def __repr__(self):
-        return "TextSummarizer(text={})".format(self.text)
+        return "TextSummarizer(text='{}')".format(self.text)
 
     def __str__(self):
         return self.text
@@ -117,7 +128,7 @@ class TextSummarizer(object):
 class TextSentiment(object):
     """docstring for TextSentiment"""
 
-    def __init__(self, text, split_sentence=False):
+    def __init__(self, text=None, split_sentence=False):
         super(TextSentiment, self).__init__()
         self.text = text
         self.split_sentence = False
@@ -158,15 +169,16 @@ class TextCaret(TextViz, TextSummarizer, TextSentiment):
     >>> docx.visual_report()
     >>> docx.summary_report()
     >>> docx.sentiment_report()
+    >>> docx.general_report()
 
     """
 
-    def __init__(self, text):
+    def __init__(self, text=None):
         super(TextCaret, self).__init__()
         self.text = text
 
     def __repr__(self):
-        return "TextCaret(text={})".format(self.text)
+        return "TextCaret(text='{}')".format(self.text)
 
     def __str__(self):
         return self.text
@@ -185,20 +197,52 @@ class TextCaret(TextViz, TextSummarizer, TextSentiment):
         return prepared_text
 
     def visual_report(self):
-        """Visualize The Given Text"""
+        """Visualize The Given Text
+        Generate a visual report of several plot for the given text
+
+
+        """
         new_docx = TextViz(self.text)
         # Generate Plots
         return new_docx.visualize()
 
-    def summary_report(self):
-        """Summarize the Given Text"""
+    def summary_report(self,num_sentence=2):
+        """Summarize the Given Text
+        Generate a summary report of the given text
+
+        Usage::
+        >>> docx = TextCaret("your text here")
+        >>> docx.summary_report()
+        >>>
+        >>> docx.summary_report(num_sentence=1)
+
+        """
         new_docx = TextSummarizer(self.text)
         # Generate Summary
-        return new_docx.summarize()
+        return new_docx.summarize(num_sentence)
 
     def sentiment_report(self):
-        """Perform Sentiment Analysis on Text"""
+        """Perform Sentiment Analysis on Text
+        Generate a sentiment report of the given text
 
-        new_docx = TextSentiment(self.text)
+        Usage::
+        >>> docx = TextCaret("your text here")
+        >>> docx.sentiment_report()
+        >>>  
+        """
+
+        new_docx = TextSentiment(self.text,split_sentence=True)
         # Generate Sentiment Report
-        return new_docx.sentiment
+        return new_docx.sentiment()
+
+    def general_report(self):
+        """Generate A General Report of the Analysis of the Text
+
+        Usage:
+        >>> docx = TextCaret("your text here")
+        >>> docx.general_report()
+
+        """
+        import neattext as nt
+        docx = nt.TextFrame(self.text)
+        return docx.describe()
