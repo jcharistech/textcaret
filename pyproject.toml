@@ -1,8 +1,24 @@
 [tool.poetry]
 name = "textcaret"
 version = "0.0.1"
-description = "Simplified NLP Toolkit for common NLP Tasks"
+description = "Simplified NLP Toolkit for unifying common Natural Language Processing Tasks"
 authors = ["Jesse E.Agbe(JCharis) <jcharistech@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/jcharistech/textcaret"
+repository = "https://github.com/jcharistech/textcaret"
+keywords = ["textcaret","tidytext","jcharistech", "pycaret", "NLP","text preprocessing","text vizualization","text summarization","sweetviz","pandas","sumy","normalize","textblob"]
+
+classifiers=[
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Operating System :: OS Independent",
+    ]
+
 
 [tool.poetry.dependencies]
 python = "^3.8"

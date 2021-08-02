@@ -1,7 +1,8 @@
 textcaret
 =========
 
-Simplified NLP Toolkit for common NLP Tasks
+Simplified NLP Toolkit for common NLP Tasks. Unifying common Natural
+Language Processing task
 
 Why TextCaret
 -------------
@@ -21,6 +22,22 @@ textcaret is available on pypi hence you can install using pip
 .. code:: bash
 
    pip install textcaret
+
+Benefits and Features
+---------------------
+
+-  Generate Reports for Text Analysis
+-  Text Summarization
+-  Text Visualization
+
+   -  wordcloud
+   -  word frequency plots
+   -  word length distribution
+   -  etc
+
+-  Sentiment Analysis
+-  Text Generation \*
+-  etc
 
 Usage
 -----
